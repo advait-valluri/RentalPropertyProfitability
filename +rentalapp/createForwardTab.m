@@ -38,7 +38,7 @@ function createForwardTab(app)
         'Value', true, ...
         'ValueChangedFcn', @(~, ~) app.updateForward());
 
-    app.Forward.renovationCosts = rentalapp.addNumericField(inputGrid, 'Renovation/repairs', 10000, 0, Inf, @() app.updateForward());
+    app.Forward.renovationCosts = rentalapp.addNumericField(inputGrid, 'Renovation costs (one time)', 10000, 0, Inf, @() app.updateForward());
     app.Forward.hoaContribution = rentalapp.addNumericField(inputGrid, 'HOA contribution / month', 350, 0, Inf, @() app.updateForward());
     app.Forward.hoaTransferablePct = rentalapp.addPercentSlider(inputGrid, 'HOA transferable to tenant (%)', 60, @() app.updateForward());
     app.Forward.vacancyPct = rentalapp.addNumericField(inputGrid, 'Vacancy (%)', 5, 0, 100, @() app.updateForward());

@@ -44,7 +44,7 @@ function createReverseTab(app)
         'Value', true, ...
         'ValueChangedFcn', @(~, ~) app.updateReverse());
 
-    app.Reverse.renovationCosts = rentalapp.addNumericField(inputGrid, 'Renovation/repairs', 10000, 0, Inf, @() app.updateReverse());
+    app.Reverse.renovationCosts = rentalapp.addNumericField(inputGrid, 'Renovation costs (one time)', 10000, 0, Inf, @() app.updateReverse());
     app.Reverse.hoaContribution = rentalapp.addNumericField(inputGrid, 'HOA contribution / month', 350, 0, Inf, @() app.updateReverse());
     app.Reverse.hoaTransferablePct = rentalapp.addPercentSlider(inputGrid, 'HOA transferable to tenant (%)', 60, @() app.updateReverse());
     app.Reverse.vacancyPct = rentalapp.addNumericField(inputGrid, 'Vacancy (%)', 5, 0, 100, @() app.updateReverse());
