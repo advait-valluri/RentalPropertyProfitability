@@ -121,3 +121,19 @@ This plot appears in the `Max price from rent` tab. It evaluates purchase prices
 The zero line on the cash-flow axis shows the break-even monthly cash-flow point. In target-return mode, the plot also shows the selected target cash-on-cash return as a reference line.
 
 This plot helps explain why the app selected the reported maximum price. Prices below the maximum should generally improve cash flow and cash-on-cash return; prices above it should weaken the result and eventually fail the selected constraint.
+
+## Maintainer Tools
+
+This repository includes a local Codex skill for strict MATLAB review:
+
+```text
+.agents/skills/matlab-review/SKILL.md
+```
+
+Use it when reviewing MATLAB files for modern R2021a+ conventions:
+
+```text
+$matlab-review <filename>
+```
+
+The skill checks for common maintainability issues such as `nargin` or `inputParser` usage where an `arguments` block would be clearer, un-vectorized loops, missing preallocation, and missing H1 documentation lines.
