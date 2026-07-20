@@ -8,6 +8,9 @@ function validateInputs(in)
     if in.vacancyPct < 0 || in.vacancyPct > 100
         error('vacancy must be between 0 and 100 percent.');
     end
+    if in.hoaTransferablePct < 0 || in.hoaTransferablePct > 100
+        error('HOA transferable share must be between 0 and 100 percent.');
+    end
     if in.loanTermYears <= 0
         error('loan term must be positive.');
     end

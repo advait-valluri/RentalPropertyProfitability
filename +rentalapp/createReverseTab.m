@@ -1,19 +1,19 @@
 function createReverseTab(app)
     main = uigridlayout(app.ReverseTab, [1 2]);
-    main.ColumnWidth = {430, '1x'};
+    main.ColumnWidth = {460, '1x'};
     main.Padding = [8 8 8 8];
     main.ColumnSpacing = 12;
 
     left = uigridlayout(main, [3 1]);
-    left.RowHeight = {470, 154, 24};
+    left.RowHeight = {'1x', 205, 34};
     left.RowSpacing = 8;
 
     inputPanel = uipanel(left, 'Title', 'Reverse inputs');
     inputPanel.Scrollable = 'on';
-    inputGrid = uigridlayout(inputPanel, [17 2]);
+    inputGrid = uigridlayout(inputPanel, [16 2]);
     inputGrid.Scrollable = 'on';
-    inputGrid.ColumnWidth = {'1x', 130};
-    inputGrid.RowHeight = repmat({26}, 1, 17);
+    inputGrid.ColumnWidth = {'1x', 155};
+    inputGrid.RowHeight = repmat({30}, 1, 16);
     inputGrid.Padding = [10 8 10 8];
     inputGrid.RowSpacing = 5;
 
@@ -28,7 +28,15 @@ function createReverseTab(app)
     app.Reverse.downPaymentPct = rentalapp.addNumericField(inputGrid, 'Down payment (%)', 20, 0, 100, @() app.updateReverse());
     app.Reverse.interestRate = rentalapp.addNumericField(inputGrid, 'Interest rate (%)', 4.5, 0, Inf, @() app.updateReverse());
     app.Reverse.loanTermYears = rentalapp.addNumericField(inputGrid, 'Loan term (years)', 30, 1, Inf, @() app.updateReverse());
-    app.Reverse.auxCostPct = rentalapp.addNumericField(inputGrid, 'Auxiliary costs (%)', 5, 0, Inf, @() app.updateReverse());
+
+    uilabel(inputGrid, 'Text', 'German federal state');
+    app.Reverse.state = uidropdown(inputGrid, ...
+        'Items', rentalapp.germanTransferTaxStateNames(), ...
+        'Value', 'North Rhine-Westphalia', ...
+        'ValueChangedFcn', @(~, ~) rentalapp.setTransferTaxFromState(app, 'Reverse'));
+    app.Reverse.transferTaxPct = rentalapp.addNumericField(inputGrid, 'Real estate transfer tax (%)', 6.5, 0, Inf, @() app.updateReverse());
+    app.Reverse.notaryPct = rentalapp.addNumericField(inputGrid, 'Notary cost (%)', 1.5, 0, Inf, @() app.updateReverse());
+    app.Reverse.landRegistryPct = rentalapp.addNumericField(inputGrid, 'Land registry cost (%)', 0.5, 0, Inf, @() app.updateReverse());
 
     uilabel(inputGrid, 'Text', 'Agent commission');
     app.Reverse.includeAgent = uicheckbox(inputGrid, ...
@@ -36,22 +44,18 @@ function createReverseTab(app)
         'Value', true, ...
         'ValueChangedFcn', @(~, ~) app.updateReverse());
 
-    app.Reverse.closingCosts = rentalapp.addNumericField(inputGrid, 'Fixed closing costs', 0, 0, Inf, @() app.updateReverse());
     app.Reverse.renovationCosts = rentalapp.addNumericField(inputGrid, 'Renovation/repairs', 10000, 0, Inf, @() app.updateReverse());
-    app.Reverse.propertyTax = rentalapp.addNumericField(inputGrid, 'Property tax / month', 250, 0, Inf, @() app.updateReverse());
-    app.Reverse.insurance = rentalapp.addNumericField(inputGrid, 'Insurance / month', 100, 0, Inf, @() app.updateReverse());
-    app.Reverse.hoa = rentalapp.addNumericField(inputGrid, 'HOA / month', 0, 0, Inf, @() app.updateReverse());
-    app.Reverse.utilities = rentalapp.addNumericField(inputGrid, 'Utilities/other / month', 100, 0, Inf, @() app.updateReverse());
+    app.Reverse.hoaContribution = rentalapp.addNumericField(inputGrid, 'HOA contribution / month', 350, 0, Inf, @() app.updateReverse());
+    app.Reverse.hoaTransferablePct = rentalapp.addPercentSlider(inputGrid, 'HOA transferable to tenant (%)', 60, @() app.updateReverse());
     app.Reverse.vacancyPct = rentalapp.addNumericField(inputGrid, 'Vacancy (%)', 5, 0, 100, @() app.updateReverse());
-    app.Reverse.maintenancePct = rentalapp.addNumericField(inputGrid, 'Maintenance (% rent)', 5, 0, Inf, @() app.updateReverse());
-    app.Reverse.capexPct = rentalapp.addNumericField(inputGrid, 'CapEx reserve (% rent)', 5, 0, Inf, @() app.updateReverse());
-    app.Reverse.managementPct = rentalapp.addNumericField(inputGrid, 'Management (% rent)', 8, 0, Inf, @() app.updateReverse());
 
     metricsPanel = uipanel(left, 'Title', 'Result');
+    metricsPanel.Scrollable = 'on';
     metricsGrid = uigridlayout(metricsPanel, [6 2]);
-    metricsGrid.ColumnWidth = {'1x', 130};
-    metricsGrid.RowHeight = repmat({20}, 1, 6);
-    metricsGrid.Padding = [10 8 10 8];
+    metricsGrid.Scrollable = 'on';
+    metricsGrid.ColumnWidth = {'1x', 160};
+    metricsGrid.RowHeight = repmat({26}, 1, 6);
+    metricsGrid.Padding = [10 10 10 10];
     app.Reverse.metricMaxPrice = rentalapp.addMetricLabel(metricsGrid, 'Maximum price');
     app.Reverse.metricInitialCash = rentalapp.addMetricLabel(metricsGrid, 'Initial cash invested');
     app.Reverse.metricMortgage = rentalapp.addMetricLabel(metricsGrid, 'Monthly mortgage');

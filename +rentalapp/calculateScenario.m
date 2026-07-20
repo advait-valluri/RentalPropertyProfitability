@@ -11,20 +11,19 @@ function result = calculateScenario(in)
     monthlyMortgage = rentalapp.mortgagePayment(loanAmount, in.interestRate, in.loanTermYears);
     loanBalance = rentalapp.amortizationBalance(loanAmount, in.interestRate, in.loanTermYears, months);
 
-    auxCosts = purchasePrice * in.auxCostPct / 100;
+    closingCostPct = in.transferTaxPct + in.notaryPct + in.landRegistryPct;
+    closingCosts = purchasePrice * closingCostPct / 100;
     agentCommission = purchasePrice * 0.0357 * double(in.includeAgent);
-    initialCash = downPayment + auxCosts + agentCommission + in.closingCosts + in.renovationCosts;
+    initialCash = downPayment + closingCosts + agentCommission + in.renovationCosts;
 
     rent = rentalapp.monthlySeries(in.monthlyRent, in.rentGrowthPct, months);
-    otherIncome = repmat(in.otherIncome, months, 1);
     effectiveRent = rent .* (1 - in.vacancyPct / 100);
 
-    fixedExpenseBase = in.propertyTax + in.insurance + in.hoa + in.utilities;
+    fixedExpenseBase = in.hoaContribution * (1 - in.hoaTransferablePct / 100);
     fixedExpenses = rentalapp.monthlySeries(fixedExpenseBase, in.expenseInflationPct, months);
-    variableExpenses = rent .* ((in.maintenancePct + in.capexPct + in.managementPct) / 100);
-    operatingExpenses = fixedExpenses + variableExpenses;
+    operatingExpenses = fixedExpenses;
 
-    grossIncome = effectiveRent + otherIncome;
+    grossIncome = effectiveRent;
     noi = grossIncome - operatingExpenses;
     debtService = repmat(monthlyMortgage, months, 1);
     cashFlow = noi - debtService;
@@ -54,6 +53,8 @@ function result = calculateScenario(in)
     result.months = monthIndex;
     result.years = years;
     result.initialCash = initialCash;
+    result.closingCosts = closingCosts;
+    result.agentCommission = agentCommission;
     result.loanAmount = loanAmount;
     result.monthlyMortgage = monthlyMortgage;
     result.grossIncome = grossIncome;
