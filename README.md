@@ -16,12 +16,17 @@ The app has two tabs:
 
 - `Forward calculation`: starts from a property purchase price and calculates monthly cash flow, return metrics, break-even timing, equity, and long-term performance.
 - `Max price from rent`: starts from a monthly rent amount and back-calculates the maximum property purchase price that satisfies either break-even cash flow or a target cash-on-cash return.
+- `Tilgung sensitivity`: uses the forward-tab scenario as a baseline and shows how monthly payment and after-tax cash flow change across a range of Tilgung rates.
+
+The `File` menu lets you save all current parameters to a `.mat` session file, load a previously saved parameter set, or exit the app.
 
 The current model includes:
 
 - Purchase price, monthly rent, down payment, interest rate, and loan term.
 - German closing-cost components: real estate transfer tax, notary cost, and land registry cost.
 - German federal state selection, which auto-fills the real estate transfer tax rate.
+- Two financing modes: `Loan term` and `Interest + Tilgung`.
+- A minimum `Tilgung` constraint used in both the forward and reverse calculations.
 - Optional real estate agent commission at `3.57%` of purchase price.
 - One-time renovation costs.
 - HOA contribution, with a slider snapped to `2%` increments and a synced exact numeric entry for the share transferable to the tenant.
@@ -75,6 +80,13 @@ Tax saving = tax-deductible amount * marginal tax rate / 100
 ```
 
 `Marginal tax rate (%)` is the only tax rate used in the tax-saving calculation. The app applies this user-entered rate as a flat multiplier to the deductible amount. It does not calculate the German progressive income-tax schedule, solidarity surcharge, church tax, or tax on positive rental profits.
+
+Financing can be modeled in two ways:
+
+- `Loan term`: payment is derived from loan amount, interest rate, and loan term.
+- `Interest + Tilgung`: payment is derived from loan amount and the sum of the interest rate and initial `Tilgung`.
+
+The app also reports the first-year effective `Tilgung` rate and checks it against the user-entered minimum `Tilgung (%/yr)` constraint.
 
 Standard residential `AfA` is inferred from the building completion year:
 
@@ -150,6 +162,15 @@ This plot appears in the `Max price from rent` tab. It evaluates purchase prices
 The zero line on the cash-flow axis shows the break-even monthly cash-flow point. In target-return mode, the plot also shows the selected target cash-on-cash return as a reference line.
 
 This plot helps explain why the app selected the reported maximum price. Prices below the maximum should generally improve cash flow and cash-on-cash return; prices above it should weaken the result and eventually fail the selected constraint.
+
+### Tilgung Sensitivity
+
+This plot appears in the `Tilgung sensitivity` tab. It varies the initial `Tilgung` rate across a user-defined range while keeping the other forward-tab scenario inputs fixed.
+
+- Left axis: monthly financing payment.
+- Right axis: after-tax monthly cash flow.
+
+This view is useful for seeing how more aggressive principal repayment affects affordability and cash flow before deciding on a financing structure.
 
 ## Maintainer Tools
 

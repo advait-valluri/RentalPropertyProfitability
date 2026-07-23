@@ -4,7 +4,9 @@ function result = evaluateFirstMonth(price, in)
 
     downPayment = price * in.downPaymentPct / 100;
     loanAmount = max(0, price - downPayment);
-    monthlyMortgage = rentalapp.mortgagePayment(loanAmount, in.interestRate, in.loanTermYears);
+    financing = rentalapp.financingProfile( ...
+        loanAmount, in.interestRate, in.financingMode, in.loanTermYears, in.initialTilgungPct, 12);
+    monthlyMortgage = financing.scheduledPayment;
 
     closingCostPct = in.transferTaxPct + in.notaryPct + in.landRegistryPct;
     closingCosts = price * closingCostPct / 100;
@@ -17,7 +19,7 @@ function result = evaluateFirstMonth(price, in)
     operatingExpenses = ownerHoaExpense + maintenanceExpense;
     noi = effectiveRent - operatingExpenses;
     preTaxCashFlow = noi - monthlyMortgage;
-    interestExpense = rentalapp.amortizationInterest(loanAmount, in.interestRate, in.loanTermYears, 1);
+    interestExpense = financing.interestSeries(1);
     taxBenefits = rentalapp.taxWriteOffs(in, price, interestExpense, operatingExpenses);
     cashFlow = preTaxCashFlow + taxBenefits.taxSavings;
 
@@ -30,4 +32,6 @@ function result = evaluateFirstMonth(price, in)
     result.cashFlow = cashFlow;
     result.cashOnCash = rentalapp.safeDivide(cashFlow * 12, initialCash) * 100;
     result.dscr = rentalapp.safeDivide(noi, monthlyMortgage);
+    result.firstYearTilgungPct = financing.firstYearTilgungPct;
+    result.meetsTilgungConstraint = ~financing.hasLoan || financing.firstYearTilgungPct + 1e-9 >= in.minimumTilgungPct;
 end
