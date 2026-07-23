@@ -12,11 +12,12 @@ The app is split into a small launcher and the `+rentalapp` package for UI const
 
 ## App Structure
 
-The app has two tabs:
+The app has four tabs:
 
 - `Forward calculation`: starts from a property purchase price and calculates monthly cash flow, return metrics, break-even timing, equity, and long-term performance.
 - `Max price from rent`: starts from a monthly rent amount and back-calculates the maximum property purchase price that satisfies either break-even cash flow or a target cash-on-cash return.
 - `Tilgung sensitivity`: uses the forward-tab scenario as a baseline and shows how monthly payment and after-tax cash flow change across a range of Tilgung rates.
+- `Payment schedule`: shows monthly interest and principal payments with yearly total rows inserted as intermediate roll-ups.
 
 The `File` menu lets you save all current parameters to a `.mat` session file, load a previously saved parameter set, or exit the app.
 
@@ -171,6 +172,21 @@ This plot appears in the `Tilgung sensitivity` tab. It varies the initial `Tilgu
 - Right axis: after-tax monthly cash flow.
 
 This view is useful for seeing how more aggressive principal repayment affects affordability and cash flow before deciding on a financing structure.
+
+### Payment Schedule
+
+This tab is driven by the current `Forward calculation` scenario and updates automatically when the forward inputs change.
+
+The table includes:
+
+- monthly payment rows
+- yearly total rows inserted after each year
+- interest paid
+- principal paid
+- total payment
+- cumulative interest
+- cumulative principal
+- remaining balance
 
 ## Maintainer Tools
 

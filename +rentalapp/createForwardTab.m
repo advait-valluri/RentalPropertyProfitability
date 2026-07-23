@@ -5,7 +5,7 @@ function createForwardTab(app)
     main.ColumnSpacing = 12;
 
     left = uigridlayout(main, [3 1]);
-    left.RowHeight = {'1x', 360, 34};
+    left.RowHeight = {'1x', 410, 34};
     left.RowSpacing = 8;
 
     inputPanel = uipanel(left, 'Title', 'Inputs');
@@ -61,15 +61,17 @@ function createForwardTab(app)
 
     metricsPanel = uipanel(left, 'Title', 'Summary');
     metricsPanel.Scrollable = 'on';
-    metricsGrid = uigridlayout(metricsPanel, [12 2]);
+    metricsGrid = uigridlayout(metricsPanel, [14 2]);
     metricsGrid.Scrollable = 'on';
     metricsGrid.ColumnWidth = {'1x', 160};
-    metricsGrid.RowHeight = repmat({26}, 1, 12);
+    metricsGrid.RowHeight = repmat({26}, 1, 14);
     metricsGrid.Padding = [10 10 10 10];
     app.Forward.metricInitialCash = rentalapp.addMetricLabel(metricsGrid, 'Initial cash invested');
     app.Forward.metricMortgage = rentalapp.addMetricLabel(metricsGrid, 'Monthly mortgage');
     app.Forward.metricNOI = rentalapp.addMetricLabel(metricsGrid, 'NOI / month');
     app.Forward.metricTilgung = rentalapp.addMetricLabel(metricsGrid, 'First-year Tilgung');
+    app.Forward.metricYear1Interest = rentalapp.addMetricLabel(metricsGrid, 'Interest paid / year 1');
+    app.Forward.metricTotalInterest = rentalapp.addMetricLabel(metricsGrid, 'Total interest paid');
     app.Forward.metricAfa = rentalapp.addMetricLabel(metricsGrid, 'AfA / year');
     app.Forward.metricDeductibleCosts = rentalapp.addMetricLabel(metricsGrid, 'Deductible costs / year 1');
     app.Forward.metricTaxSaving = rentalapp.addMetricLabel(metricsGrid, 'Tax saving / month');

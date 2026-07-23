@@ -6,9 +6,11 @@ classdef RentalPropertyApp < handle
         ForwardTab
         ReverseTab
         SensitivityTab
+        PaymentScheduleTab
         Forward = struct()
         Reverse = struct()
         Sensitivity = struct()
+        PaymentSchedule = struct()
     end
 
     methods
@@ -26,10 +28,12 @@ classdef RentalPropertyApp < handle
             obj.ForwardTab = uitab(obj.Tabs, 'Title', 'Forward calculation');
             obj.ReverseTab = uitab(obj.Tabs, 'Title', 'Max price from rent');
             obj.SensitivityTab = uitab(obj.Tabs, 'Title', 'Tilgung sensitivity');
+            obj.PaymentScheduleTab = uitab(obj.Tabs, 'Title', 'Payment schedule');
 
             rentalapp.createForwardTab(obj);
             rentalapp.createReverseTab(obj);
             rentalapp.createSensitivityTab(obj);
+            rentalapp.createPaymentScheduleTab(obj);
 
             obj.refreshAll();
         end
@@ -40,6 +44,8 @@ classdef RentalPropertyApp < handle
                 result = rentalapp.calculateScenario(in);
                 rentalapp.setForwardMetrics(obj, result);
                 rentalapp.plotForward(obj, result);
+                rentalapp.setPaymentScheduleTable(obj, result);
+                obj.PaymentSchedule.status.Text = 'Monthly rows with yearly roll-ups';
                 if result.meetsTilgungConstraint
                     obj.Forward.status.Text = '';
                 else
@@ -48,6 +54,8 @@ classdef RentalPropertyApp < handle
                 end
             catch err
                 obj.Forward.status.Text = ['Check inputs: ' err.message];
+                obj.PaymentSchedule.table.Data = cell(0, 8);
+                obj.PaymentSchedule.status.Text = ['Check inputs: ' err.message];
             end
 
             if ~isempty(obj.SensitivityTab)
@@ -139,7 +147,7 @@ classdef RentalPropertyApp < handle
 
         function session = collectSession(obj)
             session = struct();
-            session.version = 1;
+            session.version = 2;
             session.selectedTab = obj.Tabs.SelectedTab.Title;
             session.forward = struct( ...
                 'purchasePrice', obj.Forward.purchasePrice.Value, ...
@@ -194,6 +202,14 @@ classdef RentalPropertyApp < handle
                 'minTilgungPct', obj.Sensitivity.minTilgungPct.Value, ...
                 'maxTilgungPct', obj.Sensitivity.maxTilgungPct.Value, ...
                 'stepTilgungPct', obj.Sensitivity.stepTilgungPct.Value);
+            session.forwardDerived = struct();
+            try
+                forwardResult = rentalapp.calculateScenario(rentalapp.readForwardInputs(obj));
+                session.forwardDerived.firstYearInterestPaid = forwardResult.firstYearInterestPaid;
+                session.forwardDerived.totalInterestPaid = forwardResult.totalInterestPaid;
+                session.forwardDerived.paymentScheduleRows = rentalapp.buildPaymentScheduleRows(forwardResult);
+            catch
+            end
         end
 
         function applySession(obj, session)
@@ -273,6 +289,8 @@ classdef RentalPropertyApp < handle
                         obj.Tabs.SelectedTab = obj.ReverseTab;
                     case obj.SensitivityTab.Title
                         obj.Tabs.SelectedTab = obj.SensitivityTab;
+                    case obj.PaymentScheduleTab.Title
+                        obj.Tabs.SelectedTab = obj.PaymentScheduleTab;
                 end
             end
         end

@@ -3,6 +3,8 @@ function setForwardMetrics(app, result)
     app.Forward.metricMortgage.Text = rentalapp.formatMoney(app, result.monthlyMortgage);
     app.Forward.metricNOI.Text = rentalapp.formatMoney(app, result.noi(1));
     app.Forward.metricTilgung.Text = rentalapp.formatPercent(result.firstYearTilgungPct);
+    app.Forward.metricYear1Interest.Text = rentalapp.formatMoney(app, result.firstYearInterestPaid);
+    app.Forward.metricTotalInterest.Text = rentalapp.formatMoney(app, result.totalInterestPaid);
     app.Forward.metricAfa.Text = rentalapp.formatMoney(app, result.annualAfa);
     app.Forward.metricDeductibleCosts.Text = rentalapp.formatMoney(app, result.firstYearTaxDeductible);
     app.Forward.metricTaxSaving.Text = rentalapp.formatMoney(app, result.taxSavings(1));
