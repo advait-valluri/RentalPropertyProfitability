@@ -24,7 +24,9 @@ The current model includes:
 - German federal state selection, which auto-fills the real estate transfer tax rate.
 - Optional real estate agent commission at `3.57%` of purchase price.
 - One-time renovation costs.
-- HOA contribution, with a slider for the share transferable to the tenant.
+- HOA contribution, with a slider snapped to `2%` increments and a synced exact numeric entry for the share transferable to the tenant.
+- Annual maintenance costs as an owner-paid recurring expense.
+- Simplified German rental tax relief based on standard residential `AfA`, mortgage interest, owner-paid operating costs, and a user-entered marginal tax rate.
 - Vacancy, rent growth, expense inflation, appreciation, and analysis horizon.
 
 ## Core Calculations
@@ -44,17 +46,43 @@ German closing costs are:
 Purchase price * (transfer tax % + notary % + land registry %) / 100
 ```
 
+`Real estate transfer tax (%)` is the state-specific property acquisition tax and is used only in the upfront closing-cost calculation.
+
 Monthly cash flow is:
 
 ```text
-Effective rent - owner-paid HOA expense - mortgage payment
+Effective rent - owner-paid operating expenses - mortgage payment + tax saving
 ```
 
-Effective rent accounts for vacancy. Owner-paid HOA expense is only the non-transferable HOA share:
+Effective rent accounts for vacancy. Owner-paid operating expenses are:
 
 ```text
 HOA contribution * (1 - transferable HOA % / 100)
++ maintenance costs / 12
 ```
+
+The tax module uses a simplified German rental-property model:
+
+```text
+Tax-deductible amount
+= standard residential AfA on building value only
++ mortgage interest
++ owner-paid operating expenses
+```
+
+```text
+Tax saving = tax-deductible amount * marginal tax rate / 100
+```
+
+`Marginal tax rate (%)` is the only tax rate used in the tax-saving calculation. The app applies this user-entered rate as a flat multiplier to the deductible amount. It does not calculate the German progressive income-tax schedule, solidarity surcharge, church tax, or tax on positive rental profits.
+
+Standard residential `AfA` is inferred from the building completion year:
+
+- Before `1925`: `2.5%`
+- `1925` to `2023`: `2.0%`
+- `2024` onward: `3.0%`
+
+The app assumes the user provides the building share of the purchase price that is attributable to the depreciable building rather than land. This is a simplified estimate, not a full German income-tax model, and it does not cover special depreciation rules, legal eligibility checks, or taxation of positive rental profits.
 
 ## Plots
 
@@ -75,9 +103,10 @@ If the curve never reaches zero, the property does not recover the upfront cash 
 This plot appears in the `Forward calculation` tab. It compares the major monthly operating lines over time:
 
 - `Income`: effective rent after vacancy.
-- `Operating expenses`: owner-paid HOA expense, grown by expense inflation.
+- `Operating expenses`: owner-paid HOA expense plus maintenance, grown by expense inflation.
 - `Debt service`: monthly mortgage payment.
-- `Cash flow`: income minus operating expenses minus debt service.
+- `Tax saving`: estimated monthly tax relief from deductible costs.
+- `After-tax cash flow`: income minus operating expenses minus debt service plus tax saving.
 
 This plot is useful for seeing whether the property is cash-flow positive or negative and how rent growth and expense inflation change the monthly result over time.
 

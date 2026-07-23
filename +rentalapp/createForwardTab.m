@@ -5,15 +5,15 @@ function createForwardTab(app)
     main.ColumnSpacing = 12;
 
     left = uigridlayout(main, [3 1]);
-    left.RowHeight = {'1x', 245, 34};
+    left.RowHeight = {'1x', 330, 34};
     left.RowSpacing = 8;
 
     inputPanel = uipanel(left, 'Title', 'Inputs');
     inputPanel.Scrollable = 'on';
-    inputGrid = uigridlayout(inputPanel, [19 2]);
+    inputGrid = uigridlayout(inputPanel, [23 2]);
     inputGrid.Scrollable = 'on';
     inputGrid.ColumnWidth = {'1x', 155};
-    inputGrid.RowHeight = repmat({30}, 1, 19);
+    inputGrid.RowHeight = repmat({30}, 1, 23);
     inputGrid.Padding = [10 8 10 8];
     inputGrid.RowSpacing = 5;
 
@@ -28,7 +28,7 @@ function createForwardTab(app)
         'Items', rentalapp.germanTransferTaxStateNames(), ...
         'Value', 'North Rhine-Westphalia', ...
         'ValueChangedFcn', @(~, ~) rentalapp.setTransferTaxFromState(app, 'Forward'));
-    app.Forward.transferTaxPct = rentalapp.addNumericField(inputGrid, 'Real estate transfer tax (%)', 6.5, 0, Inf, @() app.updateForward());
+    app.Forward.transferTaxPct = rentalapp.addNumericField(inputGrid, 'Real estate transfer tax (%) [closing only]', 6.5, 0, Inf, @() app.updateForward());
     app.Forward.notaryPct = rentalapp.addNumericField(inputGrid, 'Notary cost (%)', 1.5, 0, Inf, @() app.updateForward());
     app.Forward.landRegistryPct = rentalapp.addNumericField(inputGrid, 'Land registry cost (%)', 0.5, 0, Inf, @() app.updateForward());
 
@@ -41,6 +41,10 @@ function createForwardTab(app)
     app.Forward.renovationCosts = rentalapp.addNumericField(inputGrid, 'Renovation costs (one time)', 10000, 0, Inf, @() app.updateForward());
     app.Forward.hoaContribution = rentalapp.addNumericField(inputGrid, 'HOA contribution / month', 350, 0, Inf, @() app.updateForward());
     app.Forward.hoaTransferablePct = rentalapp.addPercentSlider(inputGrid, 'HOA transferable to tenant (%)', 60, @() app.updateForward());
+    app.Forward.annualMaintenanceCosts = rentalapp.addNumericField(inputGrid, 'Maintenance costs / year', 3000, 0, Inf, @() app.updateForward());
+    app.Forward.buildingSharePct = rentalapp.addNumericField(inputGrid, 'Building share for AfA (%)', 80, 0, 100, @() app.updateForward());
+    app.Forward.buildingCompletionYear = rentalapp.addNumericField(inputGrid, 'Building completion year', 1995, 1800, 2100, @() app.updateForward());
+    app.Forward.marginalTaxRatePct = rentalapp.addNumericField(inputGrid, 'Marginal tax rate (%) [tax saving only]', 42, 0, 100, @() app.updateForward());
     app.Forward.vacancyPct = rentalapp.addNumericField(inputGrid, 'Vacancy (%)', 5, 0, 100, @() app.updateForward());
     app.Forward.rentGrowthPct = rentalapp.addNumericField(inputGrid, 'Rent growth (%/yr)', 2, -100, Inf, @() app.updateForward());
     app.Forward.expenseInflationPct = rentalapp.addNumericField(inputGrid, 'Expense inflation (%/yr)', 2, -100, Inf, @() app.updateForward());
@@ -49,17 +53,20 @@ function createForwardTab(app)
 
     metricsPanel = uipanel(left, 'Title', 'Summary');
     metricsPanel.Scrollable = 'on';
-    metricsGrid = uigridlayout(metricsPanel, [8 2]);
+    metricsGrid = uigridlayout(metricsPanel, [11 2]);
     metricsGrid.Scrollable = 'on';
     metricsGrid.ColumnWidth = {'1x', 160};
-    metricsGrid.RowHeight = repmat({26}, 1, 8);
+    metricsGrid.RowHeight = repmat({26}, 1, 11);
     metricsGrid.Padding = [10 10 10 10];
     app.Forward.metricInitialCash = rentalapp.addMetricLabel(metricsGrid, 'Initial cash invested');
     app.Forward.metricMortgage = rentalapp.addMetricLabel(metricsGrid, 'Monthly mortgage');
     app.Forward.metricNOI = rentalapp.addMetricLabel(metricsGrid, 'NOI / month');
-    app.Forward.metricCashFlow = rentalapp.addMetricLabel(metricsGrid, 'Cash flow / month');
+    app.Forward.metricAfa = rentalapp.addMetricLabel(metricsGrid, 'AfA / year');
+    app.Forward.metricDeductibleCosts = rentalapp.addMetricLabel(metricsGrid, 'Deductible costs / year 1');
+    app.Forward.metricTaxSaving = rentalapp.addMetricLabel(metricsGrid, 'Tax saving / month');
+    app.Forward.metricCashFlow = rentalapp.addMetricLabel(metricsGrid, 'After-tax cash flow / month');
     app.Forward.metricCapRate = rentalapp.addMetricLabel(metricsGrid, 'Cap rate');
-    app.Forward.metricCashOnCash = rentalapp.addMetricLabel(metricsGrid, 'Cash-on-cash');
+    app.Forward.metricCashOnCash = rentalapp.addMetricLabel(metricsGrid, 'After-tax cash-on-cash');
     app.Forward.metricDSCR = rentalapp.addMetricLabel(metricsGrid, 'DSCR');
     app.Forward.metricBreakEven = rentalapp.addMetricLabel(metricsGrid, 'Break even');
 

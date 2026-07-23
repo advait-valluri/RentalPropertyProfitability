@@ -38,12 +38,12 @@ function plotReverse(app, in, result)
 
     yyaxis(ax, 'left');
     plot(ax, priceRange, cashFlowValues, 'LineWidth', 1.5);
-    ylabel(ax, ['Cash flow / month (' app.Currency ')']);
+    ylabel(ax, ['After-tax cash flow / month (' app.Currency ')']);
     yline(ax, 0, '--');
 
     yyaxis(ax, 'right');
     plot(ax, priceRange, returnValues, 'LineWidth', 1.5);
-    ylabel(ax, 'Cash-on-cash (%)');
+    ylabel(ax, 'After-tax cash-on-cash (%)');
     if strcmp(in.mode, 'Target cash-on-cash')
         yline(ax, in.targetReturnPct, '--');
     end

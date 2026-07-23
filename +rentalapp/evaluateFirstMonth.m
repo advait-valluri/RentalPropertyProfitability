@@ -13,13 +13,20 @@ function result = evaluateFirstMonth(price, in)
 
     effectiveRent = in.monthlyRent * (1 - in.vacancyPct / 100);
     ownerHoaExpense = in.hoaContribution * (1 - in.hoaTransferablePct / 100);
-    noi = effectiveRent - ownerHoaExpense;
-    cashFlow = noi - monthlyMortgage;
+    maintenanceExpense = in.annualMaintenanceCosts / 12;
+    operatingExpenses = ownerHoaExpense + maintenanceExpense;
+    noi = effectiveRent - operatingExpenses;
+    preTaxCashFlow = noi - monthlyMortgage;
+    interestExpense = rentalapp.amortizationInterest(loanAmount, in.interestRate, in.loanTermYears, 1);
+    taxBenefits = rentalapp.taxWriteOffs(in, price, interestExpense, operatingExpenses);
+    cashFlow = preTaxCashFlow + taxBenefits.taxSavings;
 
     result = struct();
     result.initialCash = initialCash;
     result.monthlyMortgage = monthlyMortgage;
     result.noi = noi;
+    result.taxDeductibleAmount = taxBenefits.taxDeductibleAmount;
+    result.taxSavings = taxBenefits.taxSavings;
     result.cashFlow = cashFlow;
     result.cashOnCash = rentalapp.safeDivide(cashFlow * 12, initialCash) * 100;
     result.dscr = rentalapp.safeDivide(noi, monthlyMortgage);

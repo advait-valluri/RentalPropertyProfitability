@@ -5,15 +5,15 @@ function createReverseTab(app)
     main.ColumnSpacing = 12;
 
     left = uigridlayout(main, [3 1]);
-    left.RowHeight = {'1x', 205, 34};
+    left.RowHeight = {'1x', 255, 34};
     left.RowSpacing = 8;
 
     inputPanel = uipanel(left, 'Title', 'Reverse inputs');
     inputPanel.Scrollable = 'on';
-    inputGrid = uigridlayout(inputPanel, [16 2]);
+    inputGrid = uigridlayout(inputPanel, [20 2]);
     inputGrid.Scrollable = 'on';
     inputGrid.ColumnWidth = {'1x', 155};
-    inputGrid.RowHeight = repmat({30}, 1, 16);
+    inputGrid.RowHeight = repmat({30}, 1, 20);
     inputGrid.Padding = [10 8 10 8];
     inputGrid.RowSpacing = 5;
 
@@ -34,7 +34,7 @@ function createReverseTab(app)
         'Items', rentalapp.germanTransferTaxStateNames(), ...
         'Value', 'North Rhine-Westphalia', ...
         'ValueChangedFcn', @(~, ~) rentalapp.setTransferTaxFromState(app, 'Reverse'));
-    app.Reverse.transferTaxPct = rentalapp.addNumericField(inputGrid, 'Real estate transfer tax (%)', 6.5, 0, Inf, @() app.updateReverse());
+    app.Reverse.transferTaxPct = rentalapp.addNumericField(inputGrid, 'Real estate transfer tax (%) [closing only]', 6.5, 0, Inf, @() app.updateReverse());
     app.Reverse.notaryPct = rentalapp.addNumericField(inputGrid, 'Notary cost (%)', 1.5, 0, Inf, @() app.updateReverse());
     app.Reverse.landRegistryPct = rentalapp.addNumericField(inputGrid, 'Land registry cost (%)', 0.5, 0, Inf, @() app.updateReverse());
 
@@ -47,20 +47,26 @@ function createReverseTab(app)
     app.Reverse.renovationCosts = rentalapp.addNumericField(inputGrid, 'Renovation costs (one time)', 10000, 0, Inf, @() app.updateReverse());
     app.Reverse.hoaContribution = rentalapp.addNumericField(inputGrid, 'HOA contribution / month', 350, 0, Inf, @() app.updateReverse());
     app.Reverse.hoaTransferablePct = rentalapp.addPercentSlider(inputGrid, 'HOA transferable to tenant (%)', 60, @() app.updateReverse());
+    app.Reverse.annualMaintenanceCosts = rentalapp.addNumericField(inputGrid, 'Maintenance costs / year', 3000, 0, Inf, @() app.updateReverse());
+    app.Reverse.buildingSharePct = rentalapp.addNumericField(inputGrid, 'Building share for AfA (%)', 80, 0, 100, @() app.updateReverse());
+    app.Reverse.buildingCompletionYear = rentalapp.addNumericField(inputGrid, 'Building completion year', 1995, 1800, 2100, @() app.updateReverse());
+    app.Reverse.marginalTaxRatePct = rentalapp.addNumericField(inputGrid, 'Marginal tax rate (%) [tax saving only]', 42, 0, 100, @() app.updateReverse());
     app.Reverse.vacancyPct = rentalapp.addNumericField(inputGrid, 'Vacancy (%)', 5, 0, 100, @() app.updateReverse());
 
     metricsPanel = uipanel(left, 'Title', 'Result');
     metricsPanel.Scrollable = 'on';
-    metricsGrid = uigridlayout(metricsPanel, [6 2]);
+    metricsGrid = uigridlayout(metricsPanel, [8 2]);
     metricsGrid.Scrollable = 'on';
     metricsGrid.ColumnWidth = {'1x', 160};
-    metricsGrid.RowHeight = repmat({26}, 1, 6);
+    metricsGrid.RowHeight = repmat({26}, 1, 8);
     metricsGrid.Padding = [10 10 10 10];
     app.Reverse.metricMaxPrice = rentalapp.addMetricLabel(metricsGrid, 'Maximum price');
     app.Reverse.metricInitialCash = rentalapp.addMetricLabel(metricsGrid, 'Initial cash invested');
     app.Reverse.metricMortgage = rentalapp.addMetricLabel(metricsGrid, 'Monthly mortgage');
-    app.Reverse.metricCashFlow = rentalapp.addMetricLabel(metricsGrid, 'Cash flow / month');
-    app.Reverse.metricCashOnCash = rentalapp.addMetricLabel(metricsGrid, 'Cash-on-cash');
+    app.Reverse.metricDeductibleCosts = rentalapp.addMetricLabel(metricsGrid, 'Deductible costs / year 1');
+    app.Reverse.metricTaxSaving = rentalapp.addMetricLabel(metricsGrid, 'Tax saving / month');
+    app.Reverse.metricCashFlow = rentalapp.addMetricLabel(metricsGrid, 'After-tax cash flow / month');
+    app.Reverse.metricCashOnCash = rentalapp.addMetricLabel(metricsGrid, 'After-tax cash-on-cash');
     app.Reverse.metricDSCR = rentalapp.addMetricLabel(metricsGrid, 'DSCR');
 
     app.Reverse.status = uilabel(left, 'Text', '', 'FontColor', [0.55 0.08 0.08]);

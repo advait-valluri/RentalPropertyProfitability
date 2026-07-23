@@ -21,12 +21,16 @@ function result = calculateScenario(in)
 
     fixedExpenseBase = in.hoaContribution * (1 - in.hoaTransferablePct / 100);
     fixedExpenses = rentalapp.monthlySeries(fixedExpenseBase, in.expenseInflationPct, months);
-    operatingExpenses = fixedExpenses;
+    maintenanceExpenses = rentalapp.monthlySeries(in.annualMaintenanceCosts / 12, in.expenseInflationPct, months);
+    operatingExpenses = fixedExpenses + maintenanceExpenses;
+    interestExpenses = rentalapp.amortizationInterest(loanAmount, in.interestRate, in.loanTermYears, months);
+    taxBenefits = rentalapp.taxWriteOffs(in, purchasePrice, interestExpenses, operatingExpenses);
 
     grossIncome = effectiveRent;
     noi = grossIncome - operatingExpenses;
     debtService = repmat(monthlyMortgage, months, 1);
-    cashFlow = noi - debtService;
+    preTaxCashFlow = noi - debtService;
+    cashFlow = preTaxCashFlow + taxBenefits.taxSavings;
     cumulativeCashFlow = cumsum(cashFlow) - initialCash;
 
     propertyValue = purchasePrice * (1 + in.appreciationPct / 100) .^ years;
@@ -48,6 +52,7 @@ function result = calculateScenario(in)
     capRate = rentalapp.safeDivide(firstMonthNOI * 12, purchasePrice) * 100;
     dscr = rentalapp.safeDivide(firstMonthNOI, monthlyMortgage);
     annualCashOnCashSeries = rentalapp.annualizeByYear(cashFlow, initialCash);
+    firstYearTaxDeductible = sum(taxBenefits.taxDeductibleAmount(1:min(12, months)));
 
     result = struct();
     result.months = monthIndex;
@@ -60,7 +65,15 @@ function result = calculateScenario(in)
     result.grossIncome = grossIncome;
     result.operatingExpenses = operatingExpenses;
     result.noi = noi;
+    result.preTaxCashFlow = preTaxCashFlow;
     result.debtService = debtService;
+    result.interestExpenses = interestExpenses;
+    result.taxDeductibleAmount = taxBenefits.taxDeductibleAmount;
+    result.taxSavings = taxBenefits.taxSavings;
+    result.afaRatePct = taxBenefits.afaRatePct;
+    result.annualAfa = taxBenefits.annualAfa;
+    result.buildingBasis = taxBenefits.buildingBasis;
+    result.firstYearTaxDeductible = firstYearTaxDeductible;
     result.cashFlow = cashFlow;
     result.cumulativeCashFlow = cumulativeCashFlow;
     result.equity = equity;

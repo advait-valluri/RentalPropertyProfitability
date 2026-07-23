@@ -15,12 +15,12 @@ function plotForward(app, result)
 
     ax = app.Forward.monthlyAxis;
     cla(ax);
-    plot(ax, result.years, [result.grossIncome result.operatingExpenses result.debtService result.cashFlow], 'LineWidth', 1.3);
+    plot(ax, result.years, [result.grossIncome result.operatingExpenses result.debtService result.taxSavings result.cashFlow], 'LineWidth', 1.3);
     grid(ax, 'on');
     title(ax, 'Monthly performance');
     xlabel(ax, 'Year');
     ylabel(ax, [app.Currency ' / month']);
-    legend(ax, {'Income', 'Operating expenses', 'Debt service', 'Cash flow'}, 'Location', 'best');
+    legend(ax, {'Income', 'Operating expenses', 'Debt service', 'Tax saving', 'After-tax cash flow'}, 'Location', 'best');
 
     ax = app.Forward.equityAxis;
     cla(ax);
@@ -36,7 +36,7 @@ function plotForward(app, result)
     plot(ax, result.annualCashOnCashSeries(:, 1), result.annualCashOnCashSeries(:, 2), 'LineWidth', 1.6);
     yline(ax, 0, '--');
     grid(ax, 'on');
-    title(ax, 'Annual cash-on-cash return');
+    title(ax, 'Annual after-tax cash-on-cash return');
     xlabel(ax, 'Year');
     ylabel(ax, 'Return (%)');
 end
