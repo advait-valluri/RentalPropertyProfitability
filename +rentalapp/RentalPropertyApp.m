@@ -1,6 +1,6 @@
 classdef RentalPropertyApp < handle
     properties
-        Currency = '$'
+        Currency = '€'
         Figure
         Tabs
         ForwardTab

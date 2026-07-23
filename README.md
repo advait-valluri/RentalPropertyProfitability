@@ -1,6 +1,6 @@
 # Rental Property Profitability App
 
-Programmatic MATLAB app for evaluating the profitability of owning a rental property. The app focuses on cash invested, monthly rental cash flow, financing, German purchase closing costs, agent commission, HOA cost split, and the time needed to recover the upfront cash investment.
+Programmatic MATLAB app for evaluating the profitability of owning a rental property. The app focuses on cash invested, monthly rental cash flow, financing, German purchase closing costs, agent commission, HOA cost split, and the time needed to recover the upfront cash investment. All monetary values in the app are displayed in euro.
 
 Run from MATLAB:
 
@@ -187,6 +187,8 @@ The table includes:
 - cumulative interest
 - cumulative principal
 - remaining balance
+
+Yearly total rows are highlighted and all money values are formatted as full euro amounts rather than scientific notation.
 
 ## Maintainer Tools
 
