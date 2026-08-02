@@ -2,7 +2,6 @@ classdef RentalPropertyApp < handle
     properties
         Currency = char(8364)
         Figure
-        WindowToolbar
         WindowToggle
         CompactFigurePosition
         Tabs
@@ -26,10 +25,16 @@ classdef RentalPropertyApp < handle
                 'Visible', 'off');
 
             obj.createFileMenu();
-            obj.createWindowToolbar();
 
-            root = uigridlayout(obj.Figure, [1 1]);
+            root = uigridlayout(obj.Figure, [2 1]);
+            root.RowHeight = {24, '1x'};
             root.Padding = [12 12 12 12];
+            root.RowSpacing = 4;
+
+            header = uigridlayout(root, [1 2]);
+            header.ColumnWidth = {24, '1x'};
+            header.Padding = [0 0 0 0];
+            header.ColumnSpacing = 0;
 
             obj.Tabs = uitabgroup(root);
             obj.ForwardTab = uitab(obj.Tabs, 'Title', 'Forward calculation');
@@ -44,6 +49,7 @@ classdef RentalPropertyApp < handle
             rentalapp.createPaymentScheduleTab(obj);
             rentalapp.createCalculationsTab(obj);
 
+            obj.createWindowToggleButton(header);
             obj.refreshAll();
             obj.applyCompactWindowState();
             obj.syncWindowToggleState();
@@ -126,13 +132,14 @@ classdef RentalPropertyApp < handle
             uimenu(fileMenu, 'Text', 'Exit', 'MenuSelectedFcn', @(~, ~) delete(obj.Figure));
         end
 
-        function createWindowToolbar(obj)
-            obj.WindowToolbar = uitoolbar(obj.Figure);
-            obj.WindowToggle = uipushtool(obj.WindowToolbar, ...
-                'CData', obj.createResizeIcon(), ...
+        function createWindowToggleButton(obj, parent)
+            obj.WindowToggle = uibutton(parent, ...
+                'Text', '', ...
+                'Icon', obj.createResizeIcon(), ...
                 'Tooltip', 'Maximize window', ...
-                'TooltipString', 'Maximize window', ...
-                'ClickedCallback', @(~, ~) obj.toggleWindowSize());
+                'ButtonPushedFcn', @(~, ~) obj.toggleWindowSize());
+            obj.WindowToggle.Layout.Row = 1;
+            obj.WindowToggle.Layout.Column = 1;
         end
 
         function toggleWindowSize(obj)
@@ -175,7 +182,6 @@ classdef RentalPropertyApp < handle
 
         function setWindowButtonTooltip(obj, tooltipText)
             obj.WindowToggle.Tooltip = tooltipText;
-            obj.WindowToggle.TooltipString = tooltipText;
         end
 
         function monitorBounds = getActiveMonitorBounds(obj)
