@@ -12,12 +12,13 @@ The app is split into a small launcher and the `+rentalapp` package for UI const
 
 ## App Structure
 
-The app has four tabs:
+The app has five tabs:
 
 - `Forward calculation`: starts from a property purchase price and calculates monthly cash flow, return metrics, break-even timing, equity, and long-term performance.
 - `Max price from rent`: starts from a monthly rent amount and back-calculates the maximum property purchase price that satisfies either break-even cash flow or a target cash-on-cash return.
 - `Tilgung sensitivity`: uses the forward-tab scenario as a baseline and shows how monthly payment and after-tax cash flow change across a range of Tilgung rates.
 - `Payment schedule`: shows monthly interest and principal payments with yearly total rows inserted as intermediate roll-ups.
+- `Calculations`: shows grouped formula tables for the current forward scenario, with detailed acquisition, operating, tax, and return calculations.
 
 The `File` menu lets you save all current parameters to a `.mat` session file, load a previously saved parameter set, or exit the app.
 
@@ -96,6 +97,8 @@ Standard residential `AfA` is inferred from the building completion year:
 - `2024` onward: `3.0%`
 
 The app assumes the user provides the building share of the purchase price that is attributable to the depreciable building rather than land. This is a simplified estimate, not a full German income-tax model, and it does not cover special depreciation rules, legal eligibility checks, or taxation of positive rental profits.
+
+The `Calculations` tab displays the active forward-scenario numbers behind these formulas. The tax section expands the AfA basis, AfA rate, monthly AfA, mortgage interest, deductible operating expenses, deductible amount, marginal tax rate, and resulting monthly tax saving.
 
 ## Plots
 
@@ -189,6 +192,8 @@ The table includes:
 - remaining balance
 
 Yearly total rows are highlighted and all money values are formatted as full euro amounts rather than scientific notation.
+
+Use `Export Excel` on the payment schedule tab to save the currently displayed table, including yearly total rows, as an `.xlsx` file.
 
 ## Maintainer Tools
 

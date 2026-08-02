@@ -1,18 +1,18 @@
 function createReverseTab(app)
     main = uigridlayout(app.ReverseTab, [1 2]);
-    main.ColumnWidth = {460, '1x'};
+    main.ColumnWidth = {520, '1x'};
     main.Padding = [8 8 8 8];
     main.ColumnSpacing = 12;
 
     left = uigridlayout(main, [3 1]);
-    left.RowHeight = {'1x', 285, 34};
+    left.RowHeight = {'2.1x', '1x', 34};
     left.RowSpacing = 8;
 
     inputPanel = uipanel(left, 'Title', 'Reverse inputs');
     inputPanel.Scrollable = 'on';
     inputGrid = uigridlayout(inputPanel, [23 2]);
     inputGrid.Scrollable = 'on';
-    inputGrid.ColumnWidth = {'1x', 155};
+    inputGrid.ColumnWidth = {'1x', 180};
     inputGrid.RowHeight = repmat({30}, 1, 23);
     inputGrid.Padding = [10 8 10 8];
     inputGrid.RowSpacing = 5;

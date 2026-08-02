@@ -1,25 +1,32 @@
 classdef RentalPropertyApp < handle
     properties
-        Currency = '€'
+        Currency = char(8364)
         Figure
+        WindowToolbar
+        WindowToggle
+        CompactFigurePosition
         Tabs
         ForwardTab
         ReverseTab
         SensitivityTab
         PaymentScheduleTab
+        CalculationTab
         Forward = struct()
         Reverse = struct()
         Sensitivity = struct()
         PaymentSchedule = struct()
+        Calculations = struct()
     end
 
     methods
         function obj = RentalPropertyApp()
             obj.Figure = uifigure( ...
                 'Name', 'Rental Property Profitability', ...
-                'Position', [80 60 1360 860]);
+                'Position', [80 60 1360 860], ...
+                'Visible', 'off');
 
             obj.createFileMenu();
+            obj.createWindowToolbar();
 
             root = uigridlayout(obj.Figure, [1 1]);
             root.Padding = [12 12 12 12];
@@ -29,13 +36,18 @@ classdef RentalPropertyApp < handle
             obj.ReverseTab = uitab(obj.Tabs, 'Title', 'Max price from rent');
             obj.SensitivityTab = uitab(obj.Tabs, 'Title', 'Tilgung sensitivity');
             obj.PaymentScheduleTab = uitab(obj.Tabs, 'Title', 'Payment schedule');
+            obj.CalculationTab = uitab(obj.Tabs, 'Title', 'Calculations');
 
             rentalapp.createForwardTab(obj);
             rentalapp.createReverseTab(obj);
             rentalapp.createSensitivityTab(obj);
             rentalapp.createPaymentScheduleTab(obj);
+            rentalapp.createCalculationsTab(obj);
 
             obj.refreshAll();
+            obj.applyCompactWindowState();
+            obj.syncWindowToggleState();
+            obj.Figure.Visible = 'on';
         end
 
         function updateForward(obj)
@@ -45,6 +57,7 @@ classdef RentalPropertyApp < handle
                 rentalapp.setForwardMetrics(obj, result);
                 rentalapp.plotForward(obj, result);
                 rentalapp.setPaymentScheduleTable(obj, result);
+                rentalapp.setCalculationTables(obj, in, result);
                 obj.PaymentSchedule.status.Text = 'Monthly rows with yearly roll-ups';
                 if result.meetsTilgungConstraint
                     obj.Forward.status.Text = '';
@@ -56,6 +69,13 @@ classdef RentalPropertyApp < handle
                 obj.Forward.status.Text = ['Check inputs: ' err.message];
                 obj.PaymentSchedule.table.Data = cell(0, 8);
                 obj.PaymentSchedule.status.Text = ['Check inputs: ' err.message];
+                if isfield(obj.Calculations, 'status')
+                    obj.Calculations.status.Text = ['Check inputs: ' err.message];
+                    obj.Calculations.acquisitionTable.Data = cell(0, 4);
+                    obj.Calculations.operatingTable.Data = cell(0, 4);
+                    obj.Calculations.taxTable.Data = cell(0, 4);
+                    obj.Calculations.returnTable.Data = cell(0, 4);
+                end
             end
 
             if ~isempty(obj.SensitivityTab)
@@ -104,6 +124,119 @@ classdef RentalPropertyApp < handle
             uimenu(fileMenu, 'Text', 'Load parameters...', 'MenuSelectedFcn', @(~, ~) obj.loadSession());
             uimenu(fileMenu, 'Text', 'Save parameters...', 'MenuSelectedFcn', @(~, ~) obj.saveSession());
             uimenu(fileMenu, 'Text', 'Exit', 'MenuSelectedFcn', @(~, ~) delete(obj.Figure));
+        end
+
+        function createWindowToolbar(obj)
+            obj.WindowToolbar = uitoolbar(obj.Figure);
+            obj.WindowToggle = uipushtool(obj.WindowToolbar, ...
+                'CData', obj.createResizeIcon(), ...
+                'Tooltip', 'Maximize window', ...
+                'TooltipString', 'Maximize window', ...
+                'ClickedCallback', @(~, ~) obj.toggleWindowSize());
+        end
+
+        function toggleWindowSize(obj)
+            if isempty(obj.Figure) || ~isvalid(obj.Figure)
+                return;
+            end
+
+            if strcmp(obj.Figure.WindowState, 'maximized')
+                obj.applyCompactWindowState();
+                obj.setWindowButtonTooltip('Maximize window');
+            else
+                obj.Figure.WindowState = 'maximized';
+                drawnow;
+                obj.setWindowButtonTooltip('Restore compact window');
+            end
+        end
+
+        function applyCompactWindowState(obj)
+            monitorBounds = obj.getActiveMonitorBounds();
+            compactPosition = obj.getCompactFigurePosition(monitorBounds);
+
+            obj.Figure.WindowState = 'normal';
+            drawnow;
+            obj.Figure.Position = compactPosition;
+            drawnow;
+            obj.CompactFigurePosition = compactPosition;
+        end
+
+        function syncWindowToggleState(obj)
+            if isempty(obj.WindowToggle) || ~isvalid(obj.WindowToggle)
+                return;
+            end
+
+            if strcmp(obj.Figure.WindowState, 'maximized')
+                obj.setWindowButtonTooltip('Restore compact window');
+            else
+                obj.setWindowButtonTooltip('Maximize window');
+            end
+        end
+
+        function setWindowButtonTooltip(obj, tooltipText)
+            obj.WindowToggle.Tooltip = tooltipText;
+            obj.WindowToggle.TooltipString = tooltipText;
+        end
+
+        function monitorBounds = getActiveMonitorBounds(obj)
+            monitors = get(groot, 'MonitorPositions');
+            if isempty(monitors)
+                monitorBounds = get(groot, 'ScreenSize');
+                return;
+            end
+
+            referencePosition = obj.Figure.Position;
+            centerX = referencePosition(1) + referencePosition(3) / 2;
+            centerY = referencePosition(2) + referencePosition(4) / 2;
+
+            containsCenter = centerX >= monitors(:, 1) & ...
+                centerX <= monitors(:, 1) + monitors(:, 3) & ...
+                centerY >= monitors(:, 2) & ...
+                centerY <= monitors(:, 2) + monitors(:, 4);
+
+            if any(containsCenter)
+                monitorBounds = monitors(find(containsCenter, 1, 'first'), :);
+                return;
+            end
+
+            monitorCenters = [monitors(:, 1) + monitors(:, 3) / 2, monitors(:, 2) + monitors(:, 4) / 2];
+            [~, nearestIdx] = min(sum((monitorCenters - [centerX centerY]) .^ 2, 2));
+            monitorBounds = monitors(nearestIdx, :);
+        end
+
+        function compactPosition = getCompactFigurePosition(~, monitorBounds)
+            margin = 40;
+            compactWidth = min(round(0.78 * monitorBounds(3)), 1360);
+            compactHeight = min(round(0.82 * monitorBounds(4)), 860);
+
+            maxWidth = max(700, monitorBounds(3) - margin);
+            maxHeight = max(520, monitorBounds(4) - margin);
+            compactWidth = min(compactWidth, maxWidth);
+            compactHeight = min(compactHeight, maxHeight);
+
+            compactX = monitorBounds(1) + (monitorBounds(3) - compactWidth) / 2;
+            compactY = monitorBounds(2) + (monitorBounds(4) - compactHeight) / 2;
+            compactPosition = round([compactX compactY compactWidth compactHeight]);
+        end
+
+        function icon = createResizeIcon(~)
+            icon = nan(16, 16, 3);
+            light = reshape([0.95 0.95 0.95], 1, 1, 3);
+            dark = reshape([0.18 0.22 0.29], 1, 1, 3);
+            accent = reshape([0.11 0.47 0.74], 1, 1, 3);
+
+            icon(3:12, 3:12, :) = repmat(light, 10, 10);
+            icon(5:14, 5:14, :) = repmat(light, 10, 10);
+
+            icon(3, 3:12, :) = repmat(dark, 1, 10);
+            icon(12, 3:12, :) = repmat(dark, 1, 10);
+            icon(3:12, 3, :) = repmat(dark, 10, 1);
+            icon(3:12, 12, :) = repmat(dark, 10, 1);
+
+            icon(5, 5:14, :) = repmat(accent, 1, 10);
+            icon(14, 5:14, :) = repmat(accent, 1, 10);
+            icon(5:14, 5, :) = repmat(accent, 10, 1);
+            icon(5:14, 14, :) = repmat(accent, 10, 1);
         end
 
         function saveSession(obj)
@@ -291,6 +424,8 @@ classdef RentalPropertyApp < handle
                         obj.Tabs.SelectedTab = obj.SensitivityTab;
                     case obj.PaymentScheduleTab.Title
                         obj.Tabs.SelectedTab = obj.PaymentScheduleTab;
+                    case obj.CalculationTab.Title
+                        obj.Tabs.SelectedTab = obj.CalculationTab;
                 end
             end
         end

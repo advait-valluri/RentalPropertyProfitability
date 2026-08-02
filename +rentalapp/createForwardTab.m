@@ -1,18 +1,18 @@
 function createForwardTab(app)
     main = uigridlayout(app.ForwardTab, [1 2]);
-    main.ColumnWidth = {460, '1x'};
+    main.ColumnWidth = {520, '1x'};
     main.Padding = [8 8 8 8];
     main.ColumnSpacing = 12;
 
     left = uigridlayout(main, [3 1]);
-    left.RowHeight = {'1x', 410, 34};
+    left.RowHeight = {'2.4x', '1x', 34};
     left.RowSpacing = 8;
 
     inputPanel = uipanel(left, 'Title', 'Inputs');
     inputPanel.Scrollable = 'on';
     inputGrid = uigridlayout(inputPanel, [25 2]);
     inputGrid.Scrollable = 'on';
-    inputGrid.ColumnWidth = {'1x', 155};
+    inputGrid.ColumnWidth = {'1x', 180};
     inputGrid.RowHeight = repmat({30}, 1, 25);
     inputGrid.Padding = [10 8 10 8];
     inputGrid.RowSpacing = 5;
