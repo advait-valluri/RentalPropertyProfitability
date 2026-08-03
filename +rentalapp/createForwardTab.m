@@ -10,13 +10,15 @@ function createForwardTab(app)
 
     inputPanel = uipanel(left, 'Title', 'Inputs');
     inputPanel.Scrollable = 'on';
-    inputGrid = uigridlayout(inputPanel, [25 2]);
+    inputGrid = uigridlayout(inputPanel, [26 2]);
     inputGrid.Scrollable = 'on';
     inputGrid.ColumnWidth = {'1x', 180};
-    inputGrid.RowHeight = repmat({30}, 1, 25);
+    inputGrid.RowHeight = repmat({30}, 1, 26);
     inputGrid.Padding = [10 8 10 8];
     inputGrid.RowSpacing = 5;
 
+    uilabel(inputGrid, 'Text', 'Property address');
+    app.Forward.propertyAddress = uieditfield(inputGrid, 'text');
     app.Forward.purchasePrice = rentalapp.addNumericField(inputGrid, 'Purchase price', 300000, 0, Inf, @() app.updateForward());
     app.Forward.monthlyRent = rentalapp.addNumericField(inputGrid, 'Monthly rent', 1800, 0, Inf, @() app.updateForward());
     app.Forward.downPaymentPct = rentalapp.addNumericField(inputGrid, 'Down payment (%)', 0, 0, 100, @() app.updateForward());

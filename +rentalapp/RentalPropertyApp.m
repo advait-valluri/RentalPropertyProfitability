@@ -246,7 +246,8 @@ classdef RentalPropertyApp < handle
         end
 
         function saveSession(obj)
-            [fileName, pathName] = uiputfile('*.mat', 'Save parameter set', 'rental-property-session.mat');
+            defaultFileName = rentalapp.defaultFileName(obj.getPropertyAddress(), 'mat', 'session');
+            [fileName, pathName] = uiputfile('*.mat', 'Save parameter set', defaultFileName);
             if isequal(fileName, 0)
                 return;
             end
@@ -286,7 +287,8 @@ classdef RentalPropertyApp < handle
 
         function session = collectSession(obj)
             session = struct();
-            session.version = 2;
+            session.version = 3;
+            session.propertyAddress = obj.getPropertyAddress();
             session.selectedTab = obj.Tabs.SelectedTab.Title;
             session.forward = struct( ...
                 'purchasePrice', obj.Forward.purchasePrice.Value, ...
@@ -352,6 +354,14 @@ classdef RentalPropertyApp < handle
         end
 
         function applySession(obj, session)
+            if isfield(obj.Forward, 'propertyAddress')
+                if isfield(session, 'propertyAddress')
+                    obj.Forward.propertyAddress.Value = session.propertyAddress;
+                else
+                    obj.Forward.propertyAddress.Value = '';
+                end
+            end
+
             if isfield(session, 'forward')
                 forward = session.forward;
                 obj.setIfPresent(obj.Forward.purchasePrice, forward, 'purchasePrice');
@@ -439,6 +449,13 @@ classdef RentalPropertyApp < handle
         function setIfPresent(~, control, values, fieldName)
             if isfield(values, fieldName)
                 control.Value = values.(fieldName);
+            end
+        end
+
+        function address = getPropertyAddress(obj)
+            address = '';
+            if isfield(obj.Forward, 'propertyAddress')
+                address = strtrim(obj.Forward.propertyAddress.Value);
             end
         end
     end

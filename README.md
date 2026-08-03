@@ -20,7 +20,7 @@ The app has five tabs:
 - `Payment schedule`: shows monthly interest and principal payments with yearly total rows inserted as intermediate roll-ups.
 - `Calculations`: shows grouped formula tables for the current forward scenario, with detailed acquisition, operating, tax, and return calculations.
 
-The `File` menu lets you save all current parameters to a `.mat` session file, load a previously saved parameter set, or exit the app.
+The `File` menu lets you save all current parameters to a `.mat` session file, load a previously saved parameter set, or exit the app. The forward inputs include a property address field that is saved with the session and used to suggest street-based session and export filenames.
 
 The current model includes:
 
@@ -193,7 +193,7 @@ The table includes:
 
 Yearly total rows are highlighted and all money values are formatted as full euro amounts rather than scientific notation.
 
-Use `Export Excel` on the payment schedule tab to save the currently displayed table, including yearly total rows, as an `.xlsx` file.
+Use `Export Excel` on the payment schedule tab to create an `.xlsx` workbook. A popup lets you choose whether to include `Inputs`, `Calculations`, and `Payment schedule` sheets. The default workbook name uses the saved property street name plus a date/time stamp, and the payment schedule sheet includes the currently displayed monthly rows and yearly total rows.
 
 ## Maintainer Tools
 
