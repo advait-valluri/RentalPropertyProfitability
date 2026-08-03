@@ -193,9 +193,13 @@ The table includes:
 
 Yearly total rows are highlighted and all money values are formatted as full euro amounts rather than scientific notation.
 
-Use `Export Excel` in the app toolbar to create an `.xlsx` workbook. A popup lets you choose whether to include `Inputs`, `Calculations`, and `Payment schedule` sheets. The default workbook name uses the saved property street name plus a date/time stamp, and the payment schedule sheet includes the currently displayed monthly rows and yearly total rows.
+Use `Export Excel` in the app toolbar to create an `.xlsx` data workbook. A popup lets you choose whether to include `Inputs`, `Calculations`, and `Payment schedule` sheets. The default workbook name uses the saved property street name plus a date/time stamp, and the payment schedule sheet includes the currently displayed monthly rows and yearly total rows.
 
-Use `Export PDF` in the app toolbar to create a full report. The PDF includes every app tab as a report section, with the current inputs, summary metrics, calculation tables, payment schedule, and figures.
+Use `Export PDF` or `Export XML` in the app toolbar to create report exports. Both report formats use the same report model and include the five app tabs as top-level sections: `Forward calculation`, `Max price from rent`, `Tilgung sensitivity`, `Payment schedule`, and `Calculations`.
+
+The PDF report is formatted for reading and sharing. It uses compact metric blocks, smaller tables, emphasized key result rows, figures near the related metrics, annual payment schedule roll-ups in the main body, and the full payment schedule in an appendix.
+
+The XML report is structured for downstream processing. It includes metadata, inputs, highlighted metrics, calculation groups, annual payment schedule rows, the full payment schedule appendix, and self-contained base64 PNG figure images. XML filenames use the same street-based `*-report-yyyymmdd-HHMMSS` default naming convention as PDF reports.
 
 ## Maintainer Tools
 
