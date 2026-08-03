@@ -4,6 +4,7 @@ classdef RentalPropertyApp < handle
         Figure
         WindowToggle
         ExportButton
+        PdfExportButton
         CompactFigurePosition
         Tabs
         ForwardTab
@@ -32,8 +33,8 @@ classdef RentalPropertyApp < handle
             root.Padding = [12 12 12 12];
             root.RowSpacing = 4;
 
-            header = uigridlayout(root, [1 3]);
-            header.ColumnWidth = {24, 130, '1x'};
+            header = uigridlayout(root, [1 4]);
+            header.ColumnWidth = {24, 130, 120, '1x'};
             header.Padding = [0 0 0 0];
             header.ColumnSpacing = 8;
 
@@ -52,6 +53,7 @@ classdef RentalPropertyApp < handle
 
             obj.createWindowToggleButton(header);
             obj.createExportButton(header);
+            obj.createPdfExportButton(header);
             obj.refreshAll();
             obj.applyCompactWindowState();
             obj.syncWindowToggleState();
@@ -150,6 +152,14 @@ classdef RentalPropertyApp < handle
                 'ButtonPushedFcn', @(~, ~) rentalapp.exportWorkbook(obj));
             obj.ExportButton.Layout.Row = 1;
             obj.ExportButton.Layout.Column = 2;
+        end
+
+        function createPdfExportButton(obj, parent)
+            obj.PdfExportButton = uibutton(parent, ...
+                'Text', 'Export PDF', ...
+                'ButtonPushedFcn', @(~, ~) rentalapp.exportPdfReport(obj));
+            obj.PdfExportButton.Layout.Row = 1;
+            obj.PdfExportButton.Layout.Column = 3;
         end
 
         function toggleWindowSize(obj)

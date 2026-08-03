@@ -195,6 +195,8 @@ Yearly total rows are highlighted and all money values are formatted as full eur
 
 Use `Export Excel` in the app toolbar to create an `.xlsx` workbook. A popup lets you choose whether to include `Inputs`, `Calculations`, and `Payment schedule` sheets. The default workbook name uses the saved property street name plus a date/time stamp, and the payment schedule sheet includes the currently displayed monthly rows and yearly total rows.
 
+Use `Export PDF` in the app toolbar to create a full report. The PDF includes every app tab as a report section, with the current inputs, summary metrics, calculation tables, payment schedule, and figures.
+
 ## Maintainer Tools
 
 This repository includes a local Codex skill for strict MATLAB review:
