@@ -10,7 +10,7 @@ function result = calculateScenario(in)
     loanAmount = max(0, purchasePrice - downPayment);
     financeMonths = max(months, 12);
     financing = rentalapp.financingProfile( ...
-        loanAmount, in.interestRate, in.financingMode, in.loanTermYears, in.initialTilgungPct, financeMonths);
+        loanAmount, in.interestRate, in.financingMode, in.loanTermYears, in.initialPrincipalPct, financeMonths);
     monthlyMortgage = financing.scheduledPayment;
     loanBalance = financing.balanceSeries(1:months);
 
@@ -58,8 +58,8 @@ function result = calculateScenario(in)
     firstYearInterestPaid = sum(interestExpenses(1:min(12, months)));
     totalInterestPaid = sum(interestExpenses);
     firstYearTaxDeductible = sum(taxBenefits.taxDeductibleAmount(1:min(12, months)));
-    firstYearTilgungPct = financing.firstYearTilgungPct;
-    meetsTilgungConstraint = ~financing.hasLoan || firstYearTilgungPct + 1e-9 >= in.minimumTilgungPct;
+    firstYearPrincipalPct = financing.firstYearPrincipalPct;
+    meetsPrincipalConstraint = ~financing.hasLoan || firstYearPrincipalPct + 1e-9 >= in.minimumPrincipalPct;
 
     result = struct();
     result.months = monthIndex;
@@ -86,8 +86,8 @@ function result = calculateScenario(in)
     result.annualAfa = taxBenefits.annualAfa;
     result.buildingBasis = taxBenefits.buildingBasis;
     result.firstYearTaxDeductible = firstYearTaxDeductible;
-    result.firstYearTilgungPct = firstYearTilgungPct;
-    result.meetsTilgungConstraint = meetsTilgungConstraint;
+    result.firstYearPrincipalPct = firstYearPrincipalPct;
+    result.meetsPrincipalConstraint = meetsPrincipalConstraint;
     result.cashFlow = cashFlow;
     result.cumulativeCashFlow = cumulativeCashFlow;
     result.equity = equity;

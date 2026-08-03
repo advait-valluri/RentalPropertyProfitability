@@ -3,7 +3,7 @@ function setReverseMetrics(app, result)
         app.Reverse.metricMaxPrice.Text = '-';
         app.Reverse.metricInitialCash.Text = '-';
         app.Reverse.metricMortgage.Text = '-';
-        app.Reverse.metricTilgung.Text = '-';
+        app.Reverse.metricPrincipal.Text = '-';
         app.Reverse.metricDeductibleCosts.Text = '-';
         app.Reverse.metricTaxSaving.Text = '-';
         app.Reverse.metricCashFlow.Text = '-';
@@ -16,7 +16,7 @@ function setReverseMetrics(app, result)
     app.Reverse.metricMaxPrice.Text = rentalapp.formatMoney(app, result.maxPrice);
     app.Reverse.metricInitialCash.Text = rentalapp.formatMoney(app, scenario.initialCash);
     app.Reverse.metricMortgage.Text = rentalapp.formatMoney(app, scenario.monthlyMortgage);
-    app.Reverse.metricTilgung.Text = rentalapp.formatPercent(scenario.firstYearTilgungPct);
+    app.Reverse.metricPrincipal.Text = rentalapp.formatPercent(scenario.firstYearPrincipalPct);
     app.Reverse.metricDeductibleCosts.Text = rentalapp.formatMoney(app, scenario.firstYearTaxDeductible);
     app.Reverse.metricTaxSaving.Text = rentalapp.formatMoney(app, scenario.taxSavings(1));
     app.Reverse.metricCashFlow.Text = rentalapp.formatMoney(app, scenario.cashFlow(1));

@@ -30,12 +30,12 @@ function createReverseTab(app)
 
     uilabel(inputGrid, 'Text', 'Financing mode');
     app.Reverse.financingMode = uidropdown(inputGrid, ...
-        'Items', {'Loan term', 'Interest + Tilgung'}, ...
+        'Items', {'Loan term', 'Interest + Principal'}, ...
         'Value', 'Loan term', ...
         'ValueChangedFcn', @(~, ~) rentalapp.setFinancingMode(app, 'Reverse'));
     app.Reverse.loanTermYears = rentalapp.addNumericField(inputGrid, 'Loan term (years)', 30, 1, Inf, @() app.updateReverse());
-    app.Reverse.initialTilgungPct = rentalapp.addNumericField(inputGrid, 'Initial Tilgung (%/yr)', 2, 0, 100, @() app.updateReverse());
-    app.Reverse.minimumTilgungPct = rentalapp.addNumericField(inputGrid, 'Minimum Tilgung (%/yr)', 1, 0, 100, @() app.updateReverse());
+    app.Reverse.initialPrincipalPct = rentalapp.addNumericField(inputGrid, 'Initial principal (%/yr)', 2, 0, 100, @() app.updateReverse());
+    app.Reverse.minimumPrincipalPct = rentalapp.addNumericField(inputGrid, 'Minimum principal (%/yr)', 1, 0, 100, @() app.updateReverse());
 
     uilabel(inputGrid, 'Text', 'German federal state');
     app.Reverse.state = uidropdown(inputGrid, ...
@@ -71,7 +71,7 @@ function createReverseTab(app)
     app.Reverse.metricMaxPrice = rentalapp.addMetricLabel(metricsGrid, 'Maximum price');
     app.Reverse.metricInitialCash = rentalapp.addMetricLabel(metricsGrid, 'Initial cash invested');
     app.Reverse.metricMortgage = rentalapp.addMetricLabel(metricsGrid, 'Monthly mortgage');
-    app.Reverse.metricTilgung = rentalapp.addMetricLabel(metricsGrid, 'First-year Tilgung');
+    app.Reverse.metricPrincipal = rentalapp.addMetricLabel(metricsGrid, 'First-year principal');
     app.Reverse.metricDeductibleCosts = rentalapp.addMetricLabel(metricsGrid, 'Deductible costs / year 1');
     app.Reverse.metricTaxSaving = rentalapp.addMetricLabel(metricsGrid, 'Tax saving / month');
     app.Reverse.metricCashFlow = rentalapp.addMetricLabel(metricsGrid, 'After-tax cash flow / month');

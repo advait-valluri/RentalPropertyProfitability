@@ -5,11 +5,11 @@ function result = calculateMaxPrice(in)
     basePrice = max(100000, in.monthlyRent * 120);
 
     constraintCheck = rentalapp.evaluateFirstMonth(basePrice, in);
-    if ~constraintCheck.meetsTilgungConstraint
+    if ~constraintCheck.meetsPrincipalConstraint
         result.maxPrice = NaN;
         result.scenario = [];
-        result.status = sprintf('Minimum Tilgung not met: %.2f%% < %.2f%%.', ...
-            constraintCheck.firstYearTilgungPct, in.minimumTilgungPct);
+        result.status = sprintf('Minimum principal not met: %.2f%% < %.2f%%.', ...
+            constraintCheck.firstYearPrincipalPct, in.minimumPrincipalPct);
         return;
     end
 
@@ -47,7 +47,7 @@ end
 
 function value = reverseObjective(price, in)
     scenario = rentalapp.evaluateFirstMonth(price, in);
-    if ~scenario.meetsTilgungConstraint
+    if ~scenario.meetsPrincipalConstraint
         value = -Inf;
         return;
     end

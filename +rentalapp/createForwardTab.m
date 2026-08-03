@@ -26,12 +26,12 @@ function createForwardTab(app)
 
     uilabel(inputGrid, 'Text', 'Financing mode');
     app.Forward.financingMode = uidropdown(inputGrid, ...
-        'Items', {'Loan term', 'Interest + Tilgung'}, ...
+        'Items', {'Loan term', 'Interest + Principal'}, ...
         'Value', 'Loan term', ...
         'ValueChangedFcn', @(~, ~) rentalapp.setFinancingMode(app, 'Forward'));
     app.Forward.loanTermYears = rentalapp.addNumericField(inputGrid, 'Loan term (years)', 30, 1, Inf, @() app.updateForward());
-    app.Forward.initialTilgungPct = rentalapp.addNumericField(inputGrid, 'Initial Tilgung (%/yr)', 2, 0, 100, @() app.updateForward());
-    app.Forward.minimumTilgungPct = rentalapp.addNumericField(inputGrid, 'Minimum Tilgung (%/yr)', 1, 0, 100, @() app.updateForward());
+    app.Forward.initialPrincipalPct = rentalapp.addNumericField(inputGrid, 'Initial principal (%/yr)', 2, 0, 100, @() app.updateForward());
+    app.Forward.minimumPrincipalPct = rentalapp.addNumericField(inputGrid, 'Minimum principal (%/yr)', 1, 0, 100, @() app.updateForward());
 
     uilabel(inputGrid, 'Text', 'German federal state');
     app.Forward.state = uidropdown(inputGrid, ...
@@ -71,7 +71,7 @@ function createForwardTab(app)
     app.Forward.metricInitialCash = rentalapp.addMetricLabel(metricsGrid, 'Initial cash invested');
     app.Forward.metricMortgage = rentalapp.addMetricLabel(metricsGrid, 'Monthly mortgage');
     app.Forward.metricNOI = rentalapp.addMetricLabel(metricsGrid, 'NOI / month');
-    app.Forward.metricTilgung = rentalapp.addMetricLabel(metricsGrid, 'First-year Tilgung');
+    app.Forward.metricPrincipal = rentalapp.addMetricLabel(metricsGrid, 'First-year principal');
     app.Forward.metricYear1Interest = rentalapp.addMetricLabel(metricsGrid, 'Interest paid / year 1');
     app.Forward.metricTotalInterest = rentalapp.addMetricLabel(metricsGrid, 'Total interest paid');
     app.Forward.metricAfa = rentalapp.addMetricLabel(metricsGrid, 'AfA / year');

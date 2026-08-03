@@ -5,7 +5,7 @@ function result = evaluateFirstMonth(price, in)
     downPayment = price * in.downPaymentPct / 100;
     loanAmount = max(0, price - downPayment);
     financing = rentalapp.financingProfile( ...
-        loanAmount, in.interestRate, in.financingMode, in.loanTermYears, in.initialTilgungPct, 12);
+        loanAmount, in.interestRate, in.financingMode, in.loanTermYears, in.initialPrincipalPct, 12);
     monthlyMortgage = financing.scheduledPayment;
 
     closingCostPct = in.transferTaxPct + in.notaryPct + in.landRegistryPct;
@@ -32,6 +32,6 @@ function result = evaluateFirstMonth(price, in)
     result.cashFlow = cashFlow;
     result.cashOnCash = rentalapp.safeDivide(cashFlow * 12, initialCash) * 100;
     result.dscr = rentalapp.safeDivide(noi, monthlyMortgage);
-    result.firstYearTilgungPct = financing.firstYearTilgungPct;
-    result.meetsTilgungConstraint = ~financing.hasLoan || financing.firstYearTilgungPct + 1e-9 >= in.minimumTilgungPct;
+    result.firstYearPrincipalPct = financing.firstYearPrincipalPct;
+    result.meetsPrincipalConstraint = ~financing.hasLoan || financing.firstYearPrincipalPct + 1e-9 >= in.minimumPrincipalPct;
 end

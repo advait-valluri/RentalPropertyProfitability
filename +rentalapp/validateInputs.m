@@ -5,17 +5,17 @@ function validateInputs(in)
     if in.downPaymentPct < 0 || in.downPaymentPct > 100
         error('down payment must be between 0 and 100 percent.');
     end
-    if ~ismember(in.financingMode, {'Loan term', 'Interest + Tilgung'})
+    if ~ismember(in.financingMode, {'Loan term', 'Interest + Principal', 'Interest + Tilgung'})
         error('financing mode is not supported.');
     end
     if in.buildingSharePct < 0 || in.buildingSharePct > 100
         error('building share for AfA must be between 0 and 100 percent.');
     end
-    if in.initialTilgungPct < 0
-        error('initial Tilgung must be non-negative.');
+    if in.initialPrincipalPct < 0
+        error('initial principal must be non-negative.');
     end
-    if in.minimumTilgungPct < 0
-        error('minimum Tilgung must be non-negative.');
+    if in.minimumPrincipalPct < 0
+        error('minimum principal must be non-negative.');
     end
     if in.marginalTaxRatePct < 0 || in.marginalTaxRatePct > 100
         error('marginal tax rate must be between 0 and 100 percent.');
@@ -32,8 +32,8 @@ function validateInputs(in)
     if in.buildingCompletionYear < 1800 || in.buildingCompletionYear > 2100
         error('building completion year must be between 1800 and 2100.');
     end
-    if strcmp(in.financingMode, 'Interest + Tilgung') && in.initialTilgungPct <= 0
-        error('initial Tilgung must be positive in Interest + Tilgung mode.');
+    if ismember(in.financingMode, {'Interest + Principal', 'Interest + Tilgung'}) && in.initialPrincipalPct <= 0
+        error('initial principal must be positive in Interest + Principal mode.');
     end
     if in.loanTermYears <= 0
         error('loan term must be positive.');

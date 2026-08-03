@@ -16,7 +16,7 @@ The app has five tabs:
 
 - `Forward calculation`: starts from a property purchase price and calculates monthly cash flow, return metrics, break-even timing, equity, and long-term performance.
 - `Max price from rent`: starts from a monthly rent amount and back-calculates the maximum property purchase price that satisfies either break-even cash flow or a target cash-on-cash return.
-- `Tilgung sensitivity`: uses the forward-tab scenario as a baseline and shows how monthly payment and after-tax cash flow change across a range of Tilgung rates.
+- `Principal sensitivity`: uses the forward-tab scenario as a baseline and shows how monthly payment and after-tax cash flow change across a range of principal repayment rates.
 - `Payment schedule`: shows monthly interest and principal payments with yearly total rows inserted as intermediate roll-ups.
 - `Calculations`: shows grouped formula tables for the current forward scenario, with detailed acquisition, operating, tax, and return calculations.
 
@@ -27,8 +27,8 @@ The current model includes:
 - Purchase price, monthly rent, down payment, interest rate, and loan term.
 - German closing-cost components: real estate transfer tax, notary cost, and land registry cost.
 - German federal state selection, which auto-fills the real estate transfer tax rate.
-- Two financing modes: `Loan term` and `Interest + Tilgung`.
-- A minimum `Tilgung` constraint used in both the forward and reverse calculations.
+- Two financing modes: `Loan term` and `Interest + Principal`.
+- A minimum principal repayment constraint used in both the forward and reverse calculations.
 - Optional real estate agent commission at `3.57%` of purchase price.
 - One-time renovation costs.
 - HOA contribution, with a slider snapped to `2%` increments and a synced exact numeric entry for the share transferable to the tenant.
@@ -86,9 +86,9 @@ Tax saving = tax-deductible amount * marginal tax rate / 100
 Financing can be modeled in two ways:
 
 - `Loan term`: payment is derived from loan amount, interest rate, and loan term.
-- `Interest + Tilgung`: payment is derived from loan amount and the sum of the interest rate and initial `Tilgung`.
+- `Interest + Principal`: payment is derived from loan amount and the sum of the interest rate and initial principal repayment rate.
 
-The app also reports the first-year effective `Tilgung` rate and checks it against the user-entered minimum `Tilgung (%/yr)` constraint.
+The app also reports the first-year effective principal repayment rate and checks it against the user-entered minimum `Principal (%/yr)` constraint.
 
 Standard residential `AfA` is inferred from the building completion year:
 
@@ -167,9 +167,9 @@ The zero line on the cash-flow axis shows the break-even monthly cash-flow point
 
 This plot helps explain why the app selected the reported maximum price. Prices below the maximum should generally improve cash flow and cash-on-cash return; prices above it should weaken the result and eventually fail the selected constraint.
 
-### Tilgung Sensitivity
+### Principal Sensitivity
 
-This plot appears in the `Tilgung sensitivity` tab. It varies the initial `Tilgung` rate across a user-defined range while keeping the other forward-tab scenario inputs fixed.
+This plot appears in the `Principal sensitivity` tab. It varies the initial principal repayment rate across a user-defined range while keeping the other forward-tab scenario inputs fixed.
 
 - Left axis: monthly financing payment.
 - Right axis: after-tax monthly cash flow.
@@ -195,7 +195,7 @@ Yearly total rows are highlighted and all money values are formatted as full eur
 
 Use `Export Excel` in the app toolbar to create an `.xlsx` data workbook. A popup lets you choose whether to include `Inputs`, `Calculations`, and `Payment schedule` sheets. The default workbook name uses the saved property street name plus a date/time stamp, and the payment schedule sheet includes the currently displayed monthly rows and yearly total rows.
 
-Use `Export PDF` or `Export XML` in the app toolbar to create report exports. Both report formats use the same report model and include the five app tabs as top-level sections: `Forward calculation`, `Max price from rent`, `Tilgung sensitivity`, `Payment schedule`, and `Calculations`.
+Use `Export PDF` or `Export XML` in the app toolbar to create report exports. Both report formats use the same report model and include the five app tabs as top-level sections: `Forward calculation`, `Max price from rent`, `Principal sensitivity`, `Payment schedule`, and `Calculations`.
 
 The PDF report is formatted for reading and sharing. It uses compact metric blocks, smaller tables, emphasized key result rows, figures near the related metrics, annual payment schedule roll-ups in the main body, and the full payment schedule in an appendix.
 

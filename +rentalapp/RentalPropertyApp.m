@@ -42,7 +42,7 @@ classdef RentalPropertyApp < handle
             obj.Tabs = uitabgroup(root);
             obj.ForwardTab = uitab(obj.Tabs, 'Title', 'Forward calculation');
             obj.ReverseTab = uitab(obj.Tabs, 'Title', 'Max price from rent');
-            obj.SensitivityTab = uitab(obj.Tabs, 'Title', 'Tilgung sensitivity');
+            obj.SensitivityTab = uitab(obj.Tabs, 'Title', 'Principal sensitivity');
             obj.PaymentScheduleTab = uitab(obj.Tabs, 'Title', 'Payment schedule');
             obj.CalculationTab = uitab(obj.Tabs, 'Title', 'Calculations');
 
@@ -71,11 +71,11 @@ classdef RentalPropertyApp < handle
                 rentalapp.setPaymentScheduleTable(obj, result);
                 rentalapp.setCalculationTables(obj, in, result);
                 obj.PaymentSchedule.status.Text = 'Monthly rows with yearly roll-ups';
-                if result.meetsTilgungConstraint
+                if result.meetsPrincipalConstraint
                     obj.Forward.status.Text = '';
                 else
-                    obj.Forward.status.Text = sprintf('Minimum Tilgung not met: %.2f%% < %.2f%%.', ...
-                        result.firstYearTilgungPct, in.minimumTilgungPct);
+                    obj.Forward.status.Text = sprintf('Minimum principal not met: %.2f%% < %.2f%%.', ...
+                        result.firstYearPrincipalPct, in.minimumPrincipalPct);
                 end
             catch err
                 obj.Forward.status.Text = ['Check inputs: ' err.message];
@@ -111,7 +111,7 @@ classdef RentalPropertyApp < handle
             try
                 baseIn = rentalapp.readForwardInputs(obj);
                 sensitivityIn = rentalapp.readSensitivityInputs(obj);
-                result = rentalapp.calculateTilgungSensitivity(baseIn, sensitivityIn);
+                result = rentalapp.calculatePrincipalSensitivity(baseIn, sensitivityIn);
                 rentalapp.setSensitivityMetrics(obj, result);
                 rentalapp.plotSensitivity(obj, result);
                 obj.Sensitivity.status.Text = '';
@@ -121,7 +121,7 @@ classdef RentalPropertyApp < handle
                 obj.Sensitivity.metricCashFlowMin.Text = '-';
                 obj.Sensitivity.metricCashFlowMax.Text = '-';
                 cla(obj.Sensitivity.axis);
-                title(obj.Sensitivity.axis, 'Payment and cash flow versus Tilgung');
+                title(obj.Sensitivity.axis, 'Payment and cash flow versus principal');
                 obj.Sensitivity.status.Text = ['Check inputs: ' err.message];
             end
         end
@@ -327,8 +327,8 @@ classdef RentalPropertyApp < handle
                 'interestRate', obj.Forward.interestRate.Value, ...
                 'financingMode', obj.Forward.financingMode.Value, ...
                 'loanTermYears', obj.Forward.loanTermYears.Value, ...
-                'initialTilgungPct', obj.Forward.initialTilgungPct.Value, ...
-                'minimumTilgungPct', obj.Forward.minimumTilgungPct.Value, ...
+                'initialPrincipalPct', obj.Forward.initialPrincipalPct.Value, ...
+                'minimumPrincipalPct', obj.Forward.minimumPrincipalPct.Value, ...
                 'state', obj.Forward.state.Value, ...
                 'transferTaxPct', obj.Forward.transferTaxPct.Value, ...
                 'notaryPct', obj.Forward.notaryPct.Value, ...
@@ -354,8 +354,8 @@ classdef RentalPropertyApp < handle
                 'interestRate', obj.Reverse.interestRate.Value, ...
                 'financingMode', obj.Reverse.financingMode.Value, ...
                 'loanTermYears', obj.Reverse.loanTermYears.Value, ...
-                'initialTilgungPct', obj.Reverse.initialTilgungPct.Value, ...
-                'minimumTilgungPct', obj.Reverse.minimumTilgungPct.Value, ...
+                'initialPrincipalPct', obj.Reverse.initialPrincipalPct.Value, ...
+                'minimumPrincipalPct', obj.Reverse.minimumPrincipalPct.Value, ...
                 'state', obj.Reverse.state.Value, ...
                 'transferTaxPct', obj.Reverse.transferTaxPct.Value, ...
                 'notaryPct', obj.Reverse.notaryPct.Value, ...
@@ -370,9 +370,9 @@ classdef RentalPropertyApp < handle
                 'marginalTaxRatePct', obj.Reverse.marginalTaxRatePct.Value, ...
                 'vacancyPct', obj.Reverse.vacancyPct.Value);
             session.sensitivity = struct( ...
-                'minTilgungPct', obj.Sensitivity.minTilgungPct.Value, ...
-                'maxTilgungPct', obj.Sensitivity.maxTilgungPct.Value, ...
-                'stepTilgungPct', obj.Sensitivity.stepTilgungPct.Value);
+                'minPrincipalPct', obj.Sensitivity.minPrincipalPct.Value, ...
+                'maxPrincipalPct', obj.Sensitivity.maxPrincipalPct.Value, ...
+                'stepPrincipalPct', obj.Sensitivity.stepPrincipalPct.Value);
             session.forwardDerived = struct();
             try
                 forwardResult = rentalapp.calculateScenario(rentalapp.readForwardInputs(obj));
@@ -398,10 +398,12 @@ classdef RentalPropertyApp < handle
                 obj.setIfPresent(obj.Forward.monthlyRent, forward, 'monthlyRent');
                 obj.setIfPresent(obj.Forward.downPaymentPct, forward, 'downPaymentPct');
                 obj.setIfPresent(obj.Forward.interestRate, forward, 'interestRate');
-                obj.setIfPresent(obj.Forward.financingMode, forward, 'financingMode');
+                if isfield(forward, 'financingMode')
+                    obj.Forward.financingMode.Value = obj.normalizeFinancingMode(forward.financingMode);
+                end
                 obj.setIfPresent(obj.Forward.loanTermYears, forward, 'loanTermYears');
-                obj.setIfPresent(obj.Forward.initialTilgungPct, forward, 'initialTilgungPct');
-                obj.setIfPresent(obj.Forward.minimumTilgungPct, forward, 'minimumTilgungPct');
+                obj.setIfPresent(obj.Forward.initialPrincipalPct, forward, 'initialPrincipalPct', 'initialTilgungPct');
+                obj.setIfPresent(obj.Forward.minimumPrincipalPct, forward, 'minimumPrincipalPct', 'minimumTilgungPct');
                 obj.setIfPresent(obj.Forward.state, forward, 'state');
                 obj.setIfPresent(obj.Forward.transferTaxPct, forward, 'transferTaxPct');
                 obj.setIfPresent(obj.Forward.notaryPct, forward, 'notaryPct');
@@ -431,10 +433,12 @@ classdef RentalPropertyApp < handle
                 obj.setIfPresent(obj.Reverse.targetReturnPct, reverse, 'targetReturnPct');
                 obj.setIfPresent(obj.Reverse.downPaymentPct, reverse, 'downPaymentPct');
                 obj.setIfPresent(obj.Reverse.interestRate, reverse, 'interestRate');
-                obj.setIfPresent(obj.Reverse.financingMode, reverse, 'financingMode');
+                if isfield(reverse, 'financingMode')
+                    obj.Reverse.financingMode.Value = obj.normalizeFinancingMode(reverse.financingMode);
+                end
                 obj.setIfPresent(obj.Reverse.loanTermYears, reverse, 'loanTermYears');
-                obj.setIfPresent(obj.Reverse.initialTilgungPct, reverse, 'initialTilgungPct');
-                obj.setIfPresent(obj.Reverse.minimumTilgungPct, reverse, 'minimumTilgungPct');
+                obj.setIfPresent(obj.Reverse.initialPrincipalPct, reverse, 'initialPrincipalPct', 'initialTilgungPct');
+                obj.setIfPresent(obj.Reverse.minimumPrincipalPct, reverse, 'minimumPrincipalPct', 'minimumTilgungPct');
                 obj.setIfPresent(obj.Reverse.state, reverse, 'state');
                 obj.setIfPresent(obj.Reverse.transferTaxPct, reverse, 'transferTaxPct');
                 obj.setIfPresent(obj.Reverse.notaryPct, reverse, 'notaryPct');
@@ -455,9 +459,9 @@ classdef RentalPropertyApp < handle
 
             if isfield(session, 'sensitivity')
                 sensitivity = session.sensitivity;
-                obj.setIfPresent(obj.Sensitivity.minTilgungPct, sensitivity, 'minTilgungPct');
-                obj.setIfPresent(obj.Sensitivity.maxTilgungPct, sensitivity, 'maxTilgungPct');
-                obj.setIfPresent(obj.Sensitivity.stepTilgungPct, sensitivity, 'stepTilgungPct');
+                obj.setIfPresent(obj.Sensitivity.minPrincipalPct, sensitivity, 'minPrincipalPct', 'minTilgungPct');
+                obj.setIfPresent(obj.Sensitivity.maxPrincipalPct, sensitivity, 'maxPrincipalPct', 'maxTilgungPct');
+                obj.setIfPresent(obj.Sensitivity.stepPrincipalPct, sensitivity, 'stepPrincipalPct', 'stepTilgungPct');
             end
 
             if isfield(session, 'selectedTab')
@@ -476,9 +480,11 @@ classdef RentalPropertyApp < handle
             end
         end
 
-        function setIfPresent(~, control, values, fieldName)
+        function setIfPresent(~, control, values, fieldName, legacyFieldName)
             if isfield(values, fieldName)
                 control.Value = values.(fieldName);
+            elseif nargin >= 5 && isfield(values, legacyFieldName)
+                control.Value = values.(legacyFieldName);
             end
         end
 
@@ -486,6 +492,12 @@ classdef RentalPropertyApp < handle
             address = '';
             if isfield(obj.Forward, 'propertyAddress')
                 address = strtrim(obj.Forward.propertyAddress.Value);
+            end
+        end
+
+        function value = normalizeFinancingMode(~, value)
+            if strcmp(value, 'Interest + Tilgung')
+                value = 'Interest + Principal';
             end
         end
     end
